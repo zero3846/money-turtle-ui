@@ -1,5 +1,87 @@
+:root {
+    --main-bg-color-left: #242e4d;
+    --main-bg-color-right: #897e79;
+    --title-color: #aac9ca;
+    --accent-dark: #35c3c1;
+    --accent-light: #00d6b7;
+}
+
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+}
+
+body {
+    background: linear-gradient(
+        135deg,
+        var(--main-bg-color-left),
+        var(--main-bg-color-right)
+    );
+    font-family: helvetica, arial, sans-serif;
+    font-size: 1.5em;
+}
+
+.app {
+    width: 100vw;
+    height: 100vh;
+}
+
+.button {
+    padding: 1em;
+    background: var(--accent-dark);
+    border: none;
+}
+
+.button:focus {
+    transition: transform .15s ease;
+    transform: scale(0.95);
+}
+
+input[type="text"],
+input[type="password"] {
+    padding: 0.3rem;
+}
+
+.login {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    padding: 5vh;
+}
+
+.login h1 {
+    color: var(--title-color);
+    font-family:'Times New Roman', Times, serif;
+    font-size: 3rem;
+    margin: 1rem;
+    white-space: nowrap;
+}
+
+.login-form {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    position: relative;
+
+    background: rgba(0, 0, 0, .3);
+    padding: 2rem;
+    row-gap: 1rem;
+}
+
+.login-form:before {
+    content: '';
+    position: absolute;
+    top: -2px; left: 0;
+    height: 2px; width: 100%;
+
+    background: linear-gradient(
+        to right,
+        var(--accent-dark),
+        var(--accent-light)
+    );
+}
+
+.login-form input {
+    width: 100%;
 }

@@ -1,22 +1,26 @@
 import * as client from './client.js'
 
-const appElem = document.querySelector('.app');
-appElem.innerHTML = `<h1>Money Turtle</h1>`;
-
-if (client.getCurrentUser()) {
-    console.log(`Logged in as ${client.getCurrentUser()}`);
-} else {
-    console.log(`Logged out`);
-
-    appElem.classList = 'app login';
-    appElem.innerHTML = `
-        <div class="flex column">
+function getLoginPageHTML() {
+    return `
+        <div class="login">
             <h1>Money Turtle</h1>
-            <form class="login-form">
+            <form>
                 <input id="username" placeholder="Username" type="text">
                 <input id="password" placeholder="Password" type="password">
                 <input class="button" type="submit" value="Login">
             </form>
         </div>
     `;
+}
+
+function getHomePageHTML() {
+    return `<h1>Logged in as '${client.getCurrentUser()}'</h1>`;
+}
+
+const appElem = document.querySelector('.app');
+
+if (client.getCurrentUser()) {
+    appElem.innerHTML = getHomePageHTML();
+} else {
+    appElem.innerHTML = getLoginPageHTML();
 }

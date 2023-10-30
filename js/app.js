@@ -1,4 +1,5 @@
 import * as client from './client.js'
+import * as store from './store.js'
 
 function getLoginPageHTML() {
     return `
@@ -14,7 +15,45 @@ function getLoginPageHTML() {
 }
 
 function getHomePageHTML() {
-    return `<h1>Logged in as '${client.getCurrentUser()}'</h1>`;
+    try {
+        loadUserData();
+
+        const categories = store.getCategories();
+
+        return `
+            <section class="card">
+                <h1>Logged in as '${client.getCurrentUser()}'</h1>
+            </section>
+
+            <section class="card">
+                <h2>Budget</h2>
+                <ul>${
+                    categories.map(c =>
+                        `<li>${c.name}: ${c.type}</li>`
+                    ).join('')
+                }</ul>
+            </section>
+
+            <section class="card">
+                <h2>Accounts</h2>
+            </section>
+        `;
+    } catch (error) {
+        return `
+            <section class="card">
+                <h1>Logged in as '${client.getCurrentUser()}'</h1>
+            </section>
+
+            <section class="card">
+                <p>ERROR: ${error}</p>
+            </section>
+        `;
+    }
+}
+
+function loadUserData() {
+    store.addCategory("Emergency Fund", "savings");
+    store.addCategory("Groceries", "expense");
 }
 
 const appElem = document.querySelector('.app');

@@ -3,7 +3,7 @@ import * as api from './data.js'
 let transactions = [];
 
 export function getCurrentUser() {
-    return null;
+    return 'Turtle';
 }
 
 // Commit all uncommitted transactions.

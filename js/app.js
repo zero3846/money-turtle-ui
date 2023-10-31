@@ -1,5 +1,5 @@
 import * as client from './client.js'
-import * as store from './store.js'
+import * as data from './data.js'
 
 function getLoginPageHTML() {
     return `
@@ -18,7 +18,8 @@ function getHomePageHTML() {
     try {
         loadUserData();
 
-        const categories = store.getCategories();
+        const categories = data.getCategories();
+        const savingsBalance = data.getSavingsBalance().entries();
 
         return `
             <section class="card">
@@ -32,6 +33,7 @@ function getHomePageHTML() {
                         `<li>${c.name}: ${c.type}</li>`
                     ).join('')
                 }</ul>
+                <p>Savings Balance: ${savingsBalance}</p>
             </section>
 
             <section class="card">
@@ -52,8 +54,10 @@ function getHomePageHTML() {
 }
 
 function loadUserData() {
-    store.addCategory("Emergency Fund", "savings");
-    store.addCategory("Groceries", "expense");
+    const incomeEarned = data.addCategory("Income Earned", "savings");
+    const groceries = data.addCategory("Groceries", "expense");
+    data.submitEarn('Acme Bank', incomeEarned, 1200, 'USD', new Date());
+    data.submitSpend('Acme Bank', groceries, 12, 'USD', new Date());
 }
 
 const appElem = document.querySelector('.app');

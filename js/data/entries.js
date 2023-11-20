@@ -109,7 +109,7 @@ export function getLedgerEntries(criteria = []) {
         .filter(obj => {
             for (let i = 0; i < criteria.length; ++i) {
                 const cond = criteria[i];
-                if (cond(obj)) {
+                if (!cond(obj)) {
                     return false;
                 }
             }

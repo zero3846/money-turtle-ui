@@ -1,6 +1,38 @@
-//import { LedgerId } from '../data.js'
+import * as data from '../data.js'
+import { Quantity } from './quantity.js'
 
 const accounts = []
+
+const balanceTypes = new Map();
+
+balanceTypes.set('asset', 'debit');
+balanceTypes.set('cash', 'debit');
+balanceTypes.set('checking', 'debit');
+balanceTypes.set('fund', 'debit');
+balanceTypes.set('receivable', 'debit');
+balanceTypes.set('savings', 'debit');
+
+balanceTypes.set('liability', 'credit');
+balanceTypes.set('credit-card', 'credit');
+balanceTypes.set('loan', 'credit');
+balanceTypes.set('payable', 'credit');
+balanceTypes.set('risk', 'credit');
+
+balanceTypes.set('equity', 'credit');
+balanceTypes.set('donations', 'credit');
+balanceTypes.set('gains', 'credit');
+balanceTypes.set('income', 'credit');
+balanceTypes.set('sales', 'credit');
+
+function isValidAccountType(type) {
+    return balanceTypes.has(type);
+}
+
+function checkAccountType(type) {
+    if (!isValidAccountType(type)) {
+        throw `Invalid account type: ${type}`;
+    }
+}
 
 /**
  * A predicate method type to test accounts if they meet certain conditions.
@@ -48,6 +80,12 @@ export class Account {
      * @type {string}
      */
     get type() { return this._type; }
+    
+    
+    /**
+     * @type {string}
+     */
+    get balanceType() { return balanceTypes.get(this.type); }
 
     /**
      * @type {string}
@@ -64,6 +102,8 @@ export class Account {
  * @returns {AccountId} The ID of the new account.
  */
 export function createAccount(ledgerId, name, type, description) {
+    checkAccountType(type);
+    
     const nextId = accounts.length;
     const account = new Account(nextId, ledgerId, name, type, description);
     accounts.push(account);
@@ -79,7 +119,13 @@ export function accountIdExists(id) {
     if (id < 0 || id >= accounts.length) {
         return false;
     }
-    return accounts[i] !== undefined;
+    return accounts[id] !== undefined;
+}
+
+function checkAccountExists(id) {
+    if (!accountIdExists(id)) {
+        throw `Account does not exist: ${id}`;
+    }
 }
 
 /**
@@ -93,7 +139,7 @@ export function getAccounts(criteria = []) {
         .filter(obj => {
             for (let i = 0; i < criteria.length; ++i) {
                 const cond = criteria[i];
-                if (cond(obj)) {
+                if (!cond(obj)) {
                     return false;
                 }
             }
@@ -108,9 +154,7 @@ export function getAccounts(criteria = []) {
  * @throws An error if the account does not exist.
  */
 export function getAccountById(id) {
-    if (!accountIdExists(id)) {
-        throw `Account does not exist: ${id}}`;
-    }
+    checkAccountExists(id);
     return accounts[id];
 }
 
@@ -122,9 +166,7 @@ export function getAccountById(id) {
  * @throws An error if the account does not exist.
  */
 export function updateAccountById(id, updates) {
-    if (!accountIdExists(id)) {
-        throw `Account does not exist: ${id}}`;
-    }
+    checkAccountExists(id);
 
     const account = accounts[id];
     let updated = false;
@@ -139,8 +181,10 @@ export function updateAccountById(id, updates) {
         updated = true;
     }
 
-    if (updates.type !== undefined) {
-        account.type = updates.type;
+    const type = updates.type;
+    if (type !== undefined) {
+        checkAccountType(type)
+        account.type = type;
         updated = true;
     }
 
@@ -164,4 +208,28 @@ export function deleteAccountById(id) {
 
     accounts[id] = undefined;
     return true;
+}
+
+/**
+ * Gets the balance of the given account at the given date.
+ * @param {AccountId} id The ID of the given account.
+ * @param {Date} date The given date.
+ * @returns {Quantity} The balance quantity.
+ */
+export function getAccountBalance(id, date = new Date()) {
+    const account = getAccountById(id);
+    
+    const totalDebit = data
+        .getLedgerEntries([ e => e.debited === id ])
+        .reduce((qty, e) => qty.add(e.amount, e.unit), new Quantity());
+    
+    const totalCredit = data
+        .getLedgerEntries([ e => e.credited === id ])
+        .reduce((qty, e) => qty.add(e.amount, e.unit), new Quantity());
+    
+    
+    if (account.balanceType === 'debit') {
+        return totalDebit.subtractQuantity(totalCredit);
+    }
+    return totalCredit.subtractQuantity(totalDebit);
 }

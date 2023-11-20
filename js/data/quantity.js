@@ -14,12 +14,16 @@ export class Quantity {
         }
         const sum = this.amountsByUnit.get(unit);
         this.amountsByUnit.set(unit, sum + amount);
+        
+        return this;
     }
 
     addQuantity(qty) {
         qty.amountsByUnit.forEach((amount, unit) => {
             this.add(amount, unit);
         });
+        
+        return this;
     }
 
     subtract(amount, unit) {
@@ -29,12 +33,16 @@ export class Quantity {
         }
 
         this.add(-amount, unit);
+        
+        return this;
     }
 
     subtractQuantity(qty) {
         qty.amountsByUnit.forEach((amount, unit) => {
             this.subtract(amount, unit);
         });
+        
+        return this;
     }
 
     getAmount(unit) {

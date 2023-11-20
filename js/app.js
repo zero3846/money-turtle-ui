@@ -17,22 +17,9 @@ function getHomePageHTML() {
     try {
         client.loadUserData();
 
-        const categories = [];
-        const savingsBalance = 0;
-
         return `
             <section class="card">
                 <h1>Logged in as '${client.getCurrentUser()}'</h1>
-            </section>
-
-            <section class="card">
-                <h2>Budget</h2>
-                <ul>${
-                    categories.map(c =>
-                        `<li>${c.name}: ${c.type}</li>`
-                    ).join('')
-                }</ul>
-                <p>Savings Balance: ${savingsBalance}</p>
             </section>
 
             <section class="card">

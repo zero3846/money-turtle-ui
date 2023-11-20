@@ -63,7 +63,7 @@ export class Account {
  * @param {string} description The description of the account.
  * @returns {AccountId} The ID of the new account.
  */
-export function createAccount(ledgerId, name) {
+export function createAccount(ledgerId, name, type, description) {
     const nextId = accounts.length;
     const account = new Account(nextId, ledgerId, name, type, description);
     accounts.push(account);

@@ -1,4 +1,4 @@
-import { LedgerId } from '../data.js'
+//import { LedgerId } from '../data.js'
 
 const accounts = []
 
@@ -21,7 +21,7 @@ export class Account {
      * @param {string} type The type of this account.
      * @param {string} description The description of this account.
      */
-    constructor(id, ledgerId, name, type) {
+    constructor(id, ledgerId, name, type, description) {
         this._id = id;
         this._ledgerId = ledgerId;
         this._name = name;

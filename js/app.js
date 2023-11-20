@@ -1,8 +1,4 @@
 import * as client from './client.js'
-import * as data from './data.js'
-import * as actions from './actions.js'
-
-const history = [];
 
 function getLoginPageHTML() {
     return `
@@ -19,14 +15,10 @@ function getLoginPageHTML() {
 
 function getHomePageHTML() {
     try {
-        loadUserData();
+        client.loadUserData();
 
-        const entries = actions.produceAllEntries(history);
-        const balances = actions.produceBalances(entries);
-        console.log(balances);
-
-        const categories = data.getCategories();
-        const savingsBalance = data.getSavingsBalance().entries();
+        const categories = [];
+        const savingsBalance = 0;
 
         return `
             <section class="card">
@@ -48,6 +40,7 @@ function getHomePageHTML() {
             </section>
         `;
     } catch (error) {
+        console.error(error);
         return `
             <section class="card">
                 <h1>Logged in as '${client.getCurrentUser()}'</h1>
@@ -58,54 +51,6 @@ function getHomePageHTML() {
             </section>
         `;
     }
-}
-
-function loadUserData() {
-    history.push(actions.makeAction("earn", {
-        from: "Income Earned",
-        to: "Acme Bank",
-        amount: 1200,
-        unit: 'USD',
-        date: new Date()
-    }));
-
-    history.push(actions.makeAction("pay", {
-        from: "Acme Bank",
-        to: "Groceries",
-        amount: 12,
-        unit: 'USD',
-        date: new Date()
-    }));
-
-    history.push(actions.makeAction("refund", {
-        from: "Acme Bank",
-        to: "Groceries",
-        amount: 6,
-        unit: 'USD',
-        date: new Date()
-    }));
-
-    history.push(actions.makeAction("pay", {
-        from: "Credit Card",
-        to: "Groceries",
-        amount: 6,
-        unit: 'USD',
-        date: new Date()
-    }));
-
-    history.push(actions.makeAction("repay", {
-        from: "Acme Bank",
-        to: "Credit Card",
-        amount: 6,
-        unit: 'USD',
-        date: new Date()
-    }));
-
-
-    const incomeEarned = data.addCategory("Income Earned", "savings");
-    const groceries = data.addCategory("Groceries", "expense");
-    data.submitEarn('Acme Bank', incomeEarned, 1200, 'USD', new Date());
-    data.submitSpend('Acme Bank', groceries, 12, 'USD', new Date());
 }
 
 const appElem = document.querySelector('.app');

@@ -1,4 +1,4 @@
-import { AccountId, LedgerId } from '../data.js'
+//import { AccountId, LedgerId } from '../data.js'
 
 const entries = []
 
@@ -23,7 +23,7 @@ export class LedgerEntry {
      * @param {string} unit The unit of this entry.
      * @param {Date} date The date of this entry.
      */
-    constructor(id, ledgerId, debited, credited, amount, unit) {
+    constructor(id, ledgerId, debited, credited, amount, unit, date) {
         this._id = id;
         this._ledgerId = ledgerId;
         this._debited = debited;

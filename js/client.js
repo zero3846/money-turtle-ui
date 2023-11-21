@@ -19,12 +19,6 @@ export function loadUserData() {
     fund(emergenciesId, checkingId, 3000, new Date());
     fund(groceriesId, checkingId, 3000, new Date());
     fund(rentId, checkingId, 4000, new Date());
-
-    const entries = data.getLedgerEntries();
-    console.log(entries);
-    
-    const balance = data.getAccountBalance(groceriesId);
-    console.log(balance.getAmount(currency));
 }
 
 function earn(debited, amount, date) {
@@ -33,4 +27,28 @@ function earn(debited, amount, date) {
 
 function fund(account, from, amount, date) {
     data.createLedgerEntry(ledgerId, account, from, amount, currency, date);
+}
+
+function formatAmount(qty) {
+    const amount = qty.getAmount(currency);
+    return Intl.NumberFormat(
+        'en-US', {
+            style: 'currency',
+            currency: currency
+        }
+    ).format(amount / 100);
+}
+
+export function getAccounts() {
+    return data
+        .getAccounts([ a => a.ledgerId === ledgerId])
+        .map(a => {
+            const balance = formatAmount(
+                data.getAccountBalance(a.id)
+            );
+            return {
+                name: a.name,
+                currentBalance: balance
+            };
+        });
 }

@@ -16,6 +16,8 @@ function getLoginPageHTML() {
 function getHomePageHTML() {
     try {
         client.loadUserData();
+        
+        const accounts = client.getAccounts();
 
         return `
             <section class="card">
@@ -24,6 +26,12 @@ function getHomePageHTML() {
 
             <section class="card">
                 <h2>Accounts</h2>
+                ${accounts.map(a => `
+                    <section class="card">
+                        <p>${a.name}</p>
+                        <p>${a.currentBalance}</p>
+                    </section>
+                `).join('')}
             </section>
         `;
     } catch (error) {

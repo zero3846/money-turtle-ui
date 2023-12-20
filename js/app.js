@@ -1,5 +1,7 @@
 import * as client from './client.js'
 import * as model from './model.js'
+import './components/c-transaction-item.js'
+import { createTransactionItems } from './components/c-transaction-item.js';
 
 function getLoginPageHTML() {
     return `
@@ -61,13 +63,7 @@ function getHomePageHTML() {
             
             <section class="card">
                 <h1>Current Transactions</h1>
-                ${transactions.map(t =>`
-                    <div class="transaction">
-                        <p class="align-left">${t.date}</p>
-                        <p class="align-left">${t.account}</p>
-                        <p class="align-right">${t.increase ? t.amount : -t.amount}</p>
-                    </div>
-                `).join('')}
+                ${createTransactionItems(transactions)}
             </section>
         `;
     } catch (error) {

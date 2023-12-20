@@ -108,5 +108,5 @@ input[type="password"] {
 .transaction {
     font-size: 0.75em;
     display: grid;
-    grid-template-columns: 10ch auto 8ch 10ch;
+    grid-template-columns: 10ch auto 10ch;
 }

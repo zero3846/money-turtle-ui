@@ -1,4 +1,5 @@
 import * as client from './client.js'
+import * as model from './model.js'
 
 function getLoginPageHTML() {
     return `
@@ -17,8 +18,8 @@ function getHomePageHTML() {
     try {
         client.importData();
         
-        const accounts = client.getAccounts('USD');
-        const transactions = client.getRecentTransactions();
+        const accounts = model.getAccounts();
+        const transactions = model.getCurrentTransactions();
 
         return `
             <section class="card">
@@ -29,7 +30,7 @@ function getHomePageHTML() {
                 <h1>Accounts</h1>
                 ${accounts.map(a =>`
                     <div class="account">
-                        <p>${a.accountName} (${a.accountType})</p>
+                        <p>${a.name} (${a.type})</p>
                         <p>${a.currentBalance}</p>
                     </div>
                 `).join('')}
@@ -40,9 +41,8 @@ function getHomePageHTML() {
                 ${transactions.map(t =>`
                     <div class="transaction">
                         <p class="align-left">${t.date}</p>
-                        <p class="align-left">${t.accountName}</p>
-                        <p class="align-left">${t.side}</p>
-                        <p class="align-right">${t.amount}</p>
+                        <p class="align-left">${t.account}</p>
+                        <p class="align-right">${t.increase ? t.amount : -t.amount}</p>
                     </div>
                 `).join('')}
             </section>

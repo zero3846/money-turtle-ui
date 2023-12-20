@@ -66,24 +66,23 @@ function importAccount([event, accountType, accountName]) {
     }
 
     accounts.push({
-        type: 'account',
         accountType: accountType,
         accountName: accountName
     });
 }
 
-export function getAccounts() {
-    return accounts;
-}
-
-export function getAccount(accountName) {
-    if (!accountExists(accountName)) {
-        throw `Account does not exist: ${accountName}`;
-    }
-
-    return accounts
-        .filter(a => a.accountName === accountName)
-        [0];
+export function getAccounts(unit) {
+    return accounts.map(a => {
+        return {
+            accountName: a.accountName,
+            accountType: a.accountType,
+            currentBalance: getCurrentBalance(
+                a.accountName,
+                getBalanceType(a.accountType),
+                unit
+            )
+        }
+    });
 }
 
 let transactions = [];
@@ -91,20 +90,35 @@ let transactions = [];
 function importTransaction([event, accountName, amount, unit, date]) {
     const quantity = toQuantity(amount, unit);
     transactions.push({
-        type: 'transaction',
         side: event,
         accountName: accountName,
-        quantity: quantity,
-        date: date
+        amount: amount,
+        unit: unit,
+        date: new Date(date)
     });
+}
+
+export function getRecentTransactions() {
+    const today = new Date();
+    return transactions
+        .filter(t => t.date.getTime() < today.getTime())
+        .sort((t1, t2) => t2.date.getTime() - t1.date.getTime())
+        .map(t => {
+            return {
+                date: formatDate(t.date),
+                accountName: t.accountName,
+                side: t.side,
+                amount: formatQuantity(toQuantity(t.amount, t.unit), t.unit)
+            }
+        });
+}
+
+function formatDate(date = new Date()) {
+    return date.toLocaleDateString('en-US');
 }
 
 function toQuantity(amount, unit) {
     if (unit === 'USD') {
-        // Verify the format
-        if (!amount.match(/\d+\.\d\d/g)) {
-            throw `Invalid USD format detected: ${amount}`;
-        }
         amount = parseInt(amount.replace('.', ''));
     } else {
         amount = parseFloat(amount);
@@ -115,38 +129,40 @@ function toQuantity(amount, unit) {
     return quantity;
 }
 
-function formatAmount(qty, currency) {
-    const amount = qty.getAmount(currency);
-    return Intl.NumberFormat(
-        'en-US', {
-            style: 'currency',
-            currency: currency
-        }
-    ).format(amount / 100);
+function formatQuantity(qty, unit) {
+    if (unit === 'USD') {
+        const amount = qty.getAmount(unit);
+        return Intl.NumberFormat(
+            'en-US', {
+                style: 'currency',
+                currency: unit
+            }
+        ).format(amount / 100);
+    }
+    return `${amount} ${unit}`
 }
 
-export function getBalance(accountName, currency) {
-    const accountType = getAccount(accountName).accountType;
-    const balanceType = getBalanceType(accountType);
-
+function getCurrentBalance(accountName, balanceType, unit) {
+    const today = new Date();
     const accountTransactions = transactions
-        .filter(t => t.accountName === accountName);
+        .filter(t => t.accountName === accountName
+            && t.date.getTime() < today.getTime());
 
     const debitSum = accountTransactions
         .filter(t => t.side === 'debit')
-        .map(t => t.quantity)
+        .map(t => toQuantity(t.amount, t.unit))
         .reduce((s, q) => s.addQuantity(q), new Quantity());
 
     const creditSum = accountTransactions
         .filter(t => t.side === 'credit')
-        .map(t => t.quantity)
+        .map(t => toQuantity(t.amount, t.unit))
         .reduce((s, q) => s.addQuantity(q), new Quantity());
 
     const sum = balanceType === 'debit'
         ? debitSum.subtractQuantity(creditSum)
         : creditSum.subtractQuantity(debitSum);
     
-    return formatAmount(sum, currency);
+    return formatQuantity(sum, unit);
 }
 
 const balanceTypes = new Map();

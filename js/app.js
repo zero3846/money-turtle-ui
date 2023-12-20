@@ -17,7 +17,8 @@ function getHomePageHTML() {
     try {
         client.importData();
         
-        const accounts = client.getAccounts();
+        const accounts = client.getAccounts('USD');
+        const transactions = client.getRecentTransactions();
 
         return `
             <section class="card">
@@ -29,7 +30,19 @@ function getHomePageHTML() {
                 ${accounts.map(a =>`
                     <div class="account">
                         <p>${a.accountName} (${a.accountType})</p>
-                        <p class="small-text">Balance: ${client.getBalance(a.accountName, 'USD')}</p>
+                        <p>${a.currentBalance}</p>
+                    </div>
+                `).join('')}
+            </section>
+            
+            <section class="card">
+                <h1>Recent Transactions</h1>
+                ${transactions.map(t =>`
+                    <div class="transaction">
+                        <p class="align-left">${t.date}</p>
+                        <p class="align-left">${t.accountName}</p>
+                        <p class="align-left">${t.side}</p>
+                        <p class="align-right">${t.amount}</p>
                     </div>
                 `).join('')}
             </section>

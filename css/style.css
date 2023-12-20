@@ -91,11 +91,22 @@ input[type="password"] {
     width: 100%;
 }
 
-.small-text {
-    font-size: 0.75em;
+.align-left {
+    text-align: left;
+}
+
+.align-right {
+    text-align: right;
 }
 
 .account {
+    font-size: 0.75em;
     display: flex;
     justify-content: space-between;
+}
+
+.transaction {
+    font-size: 0.75em;
+    display: grid;
+    grid-template-columns: 10ch auto 8ch 10ch;
 }

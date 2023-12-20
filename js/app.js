@@ -19,6 +19,9 @@ function getHomePageHTML() {
         client.importData();
         
         const accounts = model.getAccounts();
+        const assets = accounts.filter(a => a.typeClass === 'asset');
+        const liabilities = accounts.filter(a => a.typeClass === 'liability');
+        const equities = accounts.filter(a => a.typeClass === 'equity');
         const transactions = model.getCurrentTransactions();
 
         return `
@@ -27,8 +30,28 @@ function getHomePageHTML() {
             </section>
 
             <section class="card">
-                <h1>Accounts</h1>
-                ${accounts.map(a =>`
+                <h1>Assets</h1>
+                ${assets.map(a =>`
+                    <div class="account">
+                        <p>${a.name} (${a.type})</p>
+                        <p>${a.currentBalance}</p>
+                    </div>
+                `).join('')}
+            </section>
+
+            <section class="card">
+                <h1>Liabilities</h1>
+                ${liabilities.map(a =>`
+                    <div class="account">
+                        <p>${a.name} (${a.type})</p>
+                        <p>${a.currentBalance}</p>
+                    </div>
+                `).join('')}
+            </section>
+
+            <section class="card">
+                <h1>Equities</h1>
+                ${equities.map(a =>`
                     <div class="account">
                         <p>${a.name} (${a.type})</p>
                         <p>${a.currentBalance}</p>
@@ -37,7 +60,7 @@ function getHomePageHTML() {
             </section>
             
             <section class="card">
-                <h1>Recent Transactions</h1>
+                <h1>Current Transactions</h1>
                 ${transactions.map(t =>`
                     <div class="transaction">
                         <p class="align-left">${t.date}</p>

@@ -1,121 +1,46 @@
-# Transactions and Ledger Entries
+# Implement page routing
 
-A transaction is simply a transfer of value. It tracks the movement
-of value going into an account or out from it.
+With single-page application design in mind, all pages should have
+its own URL.
 
-All amounts on a transaction must be positive.
+Page implementations should be in separate modules.
 
-A transaction can either be a debit or a credit. A debit transaction
-represents value that is transferred to you. A credit transaction
-represents value that is transferred to someone else. Note that these
-definitions apply even in the case of debt (not "debit"), this still
-applies, since debt is simply an obligation to provide value in the
-future.
+# Create Budget page
 
-To ensure that the ledger is always balanced, every transaction must be
-recorded in pairs: one credit and one debit, both with the same amount
-but on different accounts. These pairs will be called ledger entries.
+Create a page to display the current status of one's monthly and/or
+yearly spending and savings goals.
 
-A ledger entry will contain at least the following fields. They will be
-required.
+This page should be the home page after login.
 
-- debited: The account that is debited.
-- credited: The account that is credited.
-- amount: The amount transacted.
-- unit: The unit of account for the amount.
-- date: The date the transaction occurred.
+# Create Portfolio page
 
-# Accounts
+This page focuses on the assets the user owns and their value.
 
-Accounts are names associated with a balance. A balance is simply the
-sum total of all debits under an account versus the sum total of all
-the credits under the same account.
+# Compute the total assets, liabilities, and equities
 
-An account may represent another account on another ledger somewhere,
-or it may be an account that is private to you. For example, it could
-be your bank account, a loan, a credit card, or it could be your
-budget spending funds. It could also be just a number tracking your
-total income.
+# Introduce concept of ledgers and inventories
 
-Generally speaking, accounts fall into three categories:
-- Assets
-- Liabilities
-- Equities
+The ledger is intended to group accounts by unit. It could be used to
+implement inventories, but primarily, it should be group accounts with
+the same currency unit.
 
-Assets tracks value that you own. Liabilities track value that you may
-or are liable to pay, and equity is what's leftover after you've
-subtracted all your liabilities from your assets. Note that this is not
-equity that you own, like with stocks. This is equity that you generate.
+The main difference between a ledger and an inventory is that a ledger
+only supports exactly one currency unit, but an inventory tracks multiple
+units of account, which may not be currencies at all. Usually, an 
+inventory might imply a highly structured system of accounts that
+describe physical locations, but in this application, this is not
+necessary.
 
-Assets can be:
-- Checking accounts
-- Savings accounts
-- Funds
-- Cash
-- Money owed to you
+# Create Total Value page
 
-Liabilities can be:
-- Credit cards
-- Loans
-- Risk
-- Dividends
-- Money you owe
+This page allows the user to view his total value in terms of
+assets, liabilities, and equities.
 
-Equities can be:
-- Income Earned
-- Sales
-- Gifts/Donations
-- Capital Gains/Losses
+# Implement user authentication
 
-The balance of an asset is calculated as the total debit minus the total
-credit. For liabilities and equities, it is the total credit minus the
-total debit.
+# Implement save/load feature
 
-To make sure that all your accounts balance each other they must balance
-according to the accounting equation:
-
-    assets = liabilities + equities
-
-# Actions
-
-Actions are collections of ledger entries that track more complex
-transactions over time. Bank transfers, deliveries, loan payments,
-bills, etc are all things that happen over time, and it is useful to keep
-track of the delay, or it is at least useful to group the transactions
-together.
-
-# Database Schema
-
-## Table ledgers
-
-- id auto
-- title
-- owner
-
-## Table accounts
-
-- id auto
-- ledger_id ledgers.id
-- name string
-- type string
-- description string
-
-## Table entries
-
-- id auto
-- ledger_id ledgers.id
-- debited accounts.id
-- credited accounts.id
-- amount number
-- unit string
-- date timestamp
-
-## Table actions
-
-- id auto
-- type string
-
-## Table action_entries
-
-- action_id actions.id
-- entry_id entries.id
+Though cumbersome, it would be useful to export all the data in a text
+format that one can later load by copying and pasting into the UI. This
+could be useful while there is still a lack of a data storage solution
+and a user authentication.

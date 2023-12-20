@@ -3,18 +3,20 @@ import { formatUnit, toInternalUnits } from "./units.js";
 const accounts = new Map();
 const transactions = [];
 
-const accountTypes = new Map();
+const validTypeClasses = new Set();
+validTypeClasses.add('asset');
+validTypeClasses.add('liability');
+validTypeClasses.add('equity');
 
+const accountTypes = new Map();
 accountTypes.set('cash', 'asset');
 accountTypes.set('checking', 'asset');
 accountTypes.set('savings', 'asset');
 accountTypes.set('receivable', 'asset');
-
 accountTypes.set('credit-card', 'liability');
 accountTypes.set('loan', 'liability');
 accountTypes.set('payable', 'liability');
 accountTypes.set('risk', 'liability');
-
 accountTypes.set('donations', 'equity');
 accountTypes.set('gains', 'equity');
 accountTypes.set('income', 'equity');

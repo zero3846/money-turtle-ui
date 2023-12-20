@@ -1,35 +1,121 @@
 import * as data from './data.js'
-
-const currency = 'USD';
-const ledgerId = data.createLedger(getCurrentUser(), 'Default Ledger');
-const incomeId = data.createAccount(ledgerId, 'Income Earned', 'income', 'My total income earned');
+import { Quantity } from './data/quantity.js';
+import import_data from './private/import_data.js'
 
 export function getCurrentUser() {
     return 'Turtle';
 }
 
-export function loadUserData() {
-    const checkingId = data.createAccount(ledgerId, 'First Example Bank', 'checking', 'My checking account');
+export function importData() {
+    import_data
+        // Split data into lines
+        .split('\n')
 
-    const emergenciesId = data.createAccount(ledgerId, 'Emergency Fund', 'fund', 'Fund for unexpected emergencies');
-    const groceriesId = data.createAccount(ledgerId, 'Groceries', 'fund', 'Groceries spending fund');
-    const rentId = data.createAccount(ledgerId, 'Rent', 'fund', 'Fund for paying rent');
+        // Clean up lines
+        .map(line => line
+            // Strip comments
+            .replace(/#.*$/, '')
 
-    earn(checkingId, 10000, new Date());
-    fund(emergenciesId, checkingId, 3000, new Date());
-    fund(groceriesId, checkingId, 3000, new Date());
-    fund(rentId, checkingId, 4000, new Date());
+            // Trim whitespace per line
+            .trim()
+        )
+
+        // Skip blank lines
+        .filter(line => line.length > 0)
+
+        // Convert lines into records
+        .map(line => line
+            // Split line into fields
+            .split(',')
+
+            // Trim whitespace per field
+            .map(field => field.trim())
+        )
+
+        // Import all records
+        .forEach(record => importRecord(record));
 }
 
-function earn(debited, amount, date) {
-    data.createLedgerEntry(ledgerId, debited, incomeId, amount, currency, date);
+const importMethods = {
+    "account": importAccount,
+    "credit": importTransaction,
+    "debit": importTransaction,
 }
 
-function fund(account, from, amount, date) {
-    data.createLedgerEntry(ledgerId, account, from, amount, currency, date);
+function importRecord(record) {
+    const event = record[0];
+    if (importMethods.hasOwnProperty(event)) {
+        const importMethod = importMethods[event];
+        importMethod(record);
+    } else {
+        console.error(`Skipping unrecognized event: ${event}`)
+    }
 }
 
-function formatAmount(qty) {
+let accounts = [];
+
+function accountExists(accountName) {
+    return accounts
+        .filter(a => a.accountName === accountName)
+        .length > 0;
+}
+
+function importAccount([event, accountType, accountName]) {
+    if (accountExists(accountName)) {
+        throw `Account already exists: ${accountName}`;
+    }
+
+    accounts.push({
+        type: 'account',
+        accountType: accountType,
+        accountName: accountName
+    });
+}
+
+export function getAccounts() {
+    return accounts;
+}
+
+export function getAccount(accountName) {
+    if (!accountExists(accountName)) {
+        throw `Account does not exist: ${accountName}`;
+    }
+
+    return accounts
+        .filter(a => a.accountName === accountName)
+        [0];
+}
+
+let transactions = [];
+
+function importTransaction([event, accountName, amount, unit, date]) {
+    const quantity = toQuantity(amount, unit);
+    transactions.push({
+        type: 'transaction',
+        side: event,
+        accountName: accountName,
+        quantity: quantity,
+        date: date
+    });
+}
+
+function toQuantity(amount, unit) {
+    if (unit === 'USD') {
+        // Verify the format
+        if (!amount.match(/\d+\.\d\d/g)) {
+            throw `Invalid USD format detected: ${amount}`;
+        }
+        amount = parseInt(amount.replace('.', ''));
+    } else {
+        amount = parseFloat(amount);
+    }
+
+    const quantity = new Quantity();
+    quantity.add(amount, unit);
+    return quantity;
+}
+
+function formatAmount(qty, currency) {
     const amount = qty.getAmount(currency);
     return Intl.NumberFormat(
         'en-US', {
@@ -39,16 +125,53 @@ function formatAmount(qty) {
     ).format(amount / 100);
 }
 
-export function getAccounts() {
-    return data
-        .getAccounts([ a => a.ledgerId === ledgerId])
-        .map(a => {
-            const balance = formatAmount(
-                data.getAccountBalance(a.id)
-            );
-            return {
-                name: a.name,
-                currentBalance: balance
-            };
-        });
+export function getBalance(accountName, currency) {
+    const accountType = getAccount(accountName).accountType;
+    const balanceType = getBalanceType(accountType);
+
+    const accountTransactions = transactions
+        .filter(t => t.accountName === accountName);
+
+    const debitSum = accountTransactions
+        .filter(t => t.side === 'debit')
+        .map(t => t.quantity)
+        .reduce((s, q) => s.addQuantity(q), new Quantity());
+
+    const creditSum = accountTransactions
+        .filter(t => t.side === 'credit')
+        .map(t => t.quantity)
+        .reduce((s, q) => s.addQuantity(q), new Quantity());
+
+    const sum = balanceType === 'debit'
+        ? debitSum.subtractQuantity(creditSum)
+        : creditSum.subtractQuantity(debitSum);
+    
+    return formatAmount(sum, currency);
+}
+
+const balanceTypes = new Map();
+
+balanceTypes.set('asset', 'debit');
+balanceTypes.set('cash', 'debit');
+balanceTypes.set('checking', 'debit');
+balanceTypes.set('fund', 'debit');
+balanceTypes.set('receivable', 'debit');
+balanceTypes.set('savings', 'debit');
+
+balanceTypes.set('liability', 'credit');
+balanceTypes.set('credit-card', 'credit');
+balanceTypes.set('loan', 'credit');
+balanceTypes.set('payable', 'credit');
+balanceTypes.set('risk', 'credit');
+
+balanceTypes.set('equity', 'credit');
+balanceTypes.set('donations', 'credit');
+balanceTypes.set('gains', 'credit');
+balanceTypes.set('income', 'credit');
+balanceTypes.set('sales', 'credit');
+
+function getBalanceType(accountType) {
+    return balanceTypes.has(accountType)
+        ? balanceTypes.get(accountType)
+        : 'debit';
 }

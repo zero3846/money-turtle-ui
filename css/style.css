@@ -90,3 +90,12 @@ input[type="password"] {
 .login form input {
     width: 100%;
 }
+
+.small-text {
+    font-size: 0.75em;
+}
+
+.account {
+    display: flex;
+    justify-content: space-between;
+}

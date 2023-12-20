@@ -15,7 +15,7 @@ function getLoginPageHTML() {
 
 function getHomePageHTML() {
     try {
-        client.loadUserData();
+        client.importData();
         
         const accounts = client.getAccounts();
 
@@ -25,12 +25,12 @@ function getHomePageHTML() {
             </section>
 
             <section class="card">
-                <h2>Accounts</h2>
-                ${accounts.map(a => `
-                    <section class="card">
-                        <p>${a.name}</p>
-                        <p>${a.currentBalance}</p>
-                    </section>
+                <h1>Accounts</h1>
+                ${accounts.map(a =>`
+                    <div class="account">
+                        <p>${a.accountName} (${a.accountType})</p>
+                        <p class="small-text">Balance: ${client.getBalance(a.accountName, 'USD')}</p>
+                    </div>
                 `).join('')}
             </section>
         `;

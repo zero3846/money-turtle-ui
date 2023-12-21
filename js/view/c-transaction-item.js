@@ -2,7 +2,6 @@ import { defineComponent } from "./component.js"
 
 const cssStyle = `
 .item {
-    font-size: 0.75em;
     display: grid;
     grid-template-columns: 10ch auto 10ch;
 }
@@ -28,12 +27,10 @@ defineComponent('c-transaction-item', cssStyle, element => {
     return content;
 });
 
-export function createTransactionItems(transactions) {
-    return transactions.map(t => `
-        <c-transaction-item
-            date="${t.date}"
-            account="${t.account}"
-            amount="${(t.increase ? '' : '-') + t.amount}"
-        ></c-transaction-item>
-    `).join('');
+export function createTransactionItem(t) {
+    const element = document.createElement('c-transaction-item');
+    element.setAttribute('date', t.date);
+    element.setAttribute('account', t.account);
+    element.setAttribute('amount', (t.increase ? '' : '-') + t.amount);
+    return element;
 }

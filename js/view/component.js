@@ -1,3 +1,5 @@
+import * as state from './state.js'
+
 /**
  * A callback method to build the shadow root of a custom component.
  * @name ElementBuilder
@@ -27,6 +29,15 @@ export function defineComponent(elementName, cssStyle, elementBuilder) {
     
             const content = elementBuilder(this);
             shadow.appendChild(content);
+
+            if (this.hasAttribute("model-id")) {
+                const modelId = this.getAttribute("model-id").trim();
+                state.useModel(modelId);
+                state.listen(modelId, 'updated', e => {
+                    const newContent = elementBuilder(this);
+                    shadow.replaceChild(newContent, content);
+                });
+            }
         }
     });
 }

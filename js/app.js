@@ -1,7 +1,7 @@
 import * as client from './client.js'
 import * as model from './model.js'
 import './view/c-transaction-list.js';
-import { useModel, emit } from './view/state.js';
+import { setModel, emit } from './view/state.js';
 
 function getLoginPageHTML() {
     return `
@@ -88,7 +88,7 @@ if (client.getCurrentUser()) {
         console.log('time');
 
         const transactions = model.getCurrentTransactions();
-        useModel('current-transactions', transactions);
+        setModel('current-transactions', transactions);
     }, 1000);
 } else {
     appElem.innerHTML = getLoginPageHTML();

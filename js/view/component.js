@@ -8,12 +8,8 @@ export class Component extends HTMLElement {
         this._updatedListener = null;
     }
 
-    get modelId() {
-        return this._modelId;
-    }
-
-    get modelState() {
-        return state.getModelState(this._modelId);
+    get model() {
+        return state.getModel(this._modelId);
     }
 
     buildContent() {
@@ -30,7 +26,7 @@ export class Component extends HTMLElement {
 
         if (this.hasAttribute('model-id')) {
             this._modelId = this.getAttribute('model-id');
-            state.useModel(this._modelId);
+            state.setModel(this._modelId);
         }
 
         const content = this.buildContent();

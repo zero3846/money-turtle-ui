@@ -4,7 +4,7 @@ function assert(condition, failMessage) {
     if (!condition) { throw failMessage; }
 }
 
-export function useModel(modelId, state) {
+export function setModel(modelId, state) {
     assert(modelId, `Model ID cannot be undefined or blank.`);
 
     if (models.has(modelId)) {
@@ -22,7 +22,7 @@ export function useModel(modelId, state) {
     }
 }
 
-export function getModelState(modelId) {
+export function getModel(modelId) {
     assert(models.has(modelId), `Model does not exist: ${modelId}`);
 
     return models.get(modelId).state;

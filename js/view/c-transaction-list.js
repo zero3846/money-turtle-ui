@@ -17,11 +17,9 @@ class CTransactionList extends Component {
         const content = document.createElement('div');
         content.className = 'list';
         
-        if (this.modelState) {
-            this.modelState
-                .map(t => createTransactionItem(t))
-                .forEach(item => content.appendChild(item));
-        }
+        (this.model ?? [])
+            .map(t => createTransactionItem(t))
+            .forEach(item => content.appendChild(item));
     
         return content;
     }

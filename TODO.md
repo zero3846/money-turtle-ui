@@ -1,11 +1,3 @@
-# Implement state management
-
-It should be relatively easy to read and update state information for
-each component.
-
-One solution is to put the state of the component as JSON in the content
-of the custom component element's content.
-
 # Implement page routing
 
 With single-page application design in mind, all pages should have

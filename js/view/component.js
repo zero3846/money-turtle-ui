@@ -17,6 +17,7 @@ export function defineComponent(elementName, cssStyle, elementBuilder) {
     customElements.define(elementName, class extends HTMLElement {
         constructor() {
             super();
+            this._updatedListener = null;
         }
     
         connectedCallback() {
@@ -32,11 +33,19 @@ export function defineComponent(elementName, cssStyle, elementBuilder) {
 
             if (this.hasAttribute("model-id")) {
                 const modelId = this.getAttribute("model-id").trim();
+
                 state.useModel(modelId);
-                state.listen(modelId, 'updated', e => {
+                this._updatedListener = state.listen(modelId, 'updated', e => {
                     const newContent = elementBuilder(this);
                     shadow.replaceChild(newContent, content);
                 });
+            }
+        }
+
+        disconnectedCallback() {
+            if (this._updatedListener) {
+                state.unlisten(this._modelId, this._updatedListener);
+                this._updatedListener = null;
             }
         }
     });

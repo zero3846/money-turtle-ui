@@ -1,6 +1,6 @@
-import { defineComponent } from "./component.js"
+import { Component } from "./component.js"
 
-const cssStyle = `
+const css = `
 .item {
     display: grid;
     grid-template-columns: 10ch auto 10ch;
@@ -15,17 +15,23 @@ const cssStyle = `
 }
 `;
 
-defineComponent('c-transaction-item', cssStyle, element => {
-    const content = document.createElement('div');
-    content.className = 'item';
-    content.innerHTML = `
-        <div class='left'>${element.getAttribute('date')}</div>
-        <div class='left'>${element.getAttribute('account')}</div>
-        <div class='right'>${element.getAttribute('amount')}</div>
-    `;
+class CTransactionItem extends Component {
+    constructor() {
+        super(css);
+    }
 
-    return content;
-});
+    buildContent() {
+        const content = document.createElement('div');
+        content.className = 'item';
+        content.innerHTML = `
+            <div class='left'>${this.getAttribute('date')}</div>
+            <div class='left'>${this.getAttribute('account')}</div>
+            <div class='right'>${this.getAttribute('amount')}</div>
+        `;
+
+        return content;
+    }
+}
 
 export function createTransactionItem(t) {
     const element = document.createElement('c-transaction-item');
@@ -34,3 +40,5 @@ export function createTransactionItem(t) {
     element.setAttribute('amount', (t.increase ? '' : '-') + t.amount);
     return element;
 }
+
+customElements.define('c-transaction-item', CTransactionItem);

@@ -64,8 +64,8 @@ export function emit(modelId, eventType, eventData) {
     assert(models.has(modelId), `Model does not exist: ${modelId}`);
 
     const model = models.get(modelId);
-
-    for (const listener of Object.values(model.listeners)) {
+    
+    for (const listener of model.listeners.values()) {
         if (listener.eventType === eventType) {
             listener.callback({
                 type: eventType,

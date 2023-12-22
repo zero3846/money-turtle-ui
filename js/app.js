@@ -1,7 +1,6 @@
 import * as client from './client.js'
 import * as model from './model.js'
-import './view/c-transaction-item.js'
-import { createTransactionList } from './view/c-transaction-list.js';
+import './view/c-transaction-list.js';
 import { useModel, emit } from './view/state.js';
 
 function getLoginPageHTML() {
@@ -25,9 +24,6 @@ function getHomePageHTML() {
         const assets = accounts.filter(a => a.typeClass === 'asset');
         const liabilities = accounts.filter(a => a.typeClass === 'liability');
         const equities = accounts.filter(a => a.typeClass === 'equity');
-        const transactions = model.getCurrentTransactions();
-
-        useModel("current-transactions", transactions);
 
         return `
             <section class="card">
@@ -66,6 +62,7 @@ function getHomePageHTML() {
             
             <section id="current-transactions" class="card">
                 <h1>Current Transactions</h1>
+                <c-transaction-list model-id="current-transactions"></c-transaction-list>
             </section>
         `;
     } catch (error) {
@@ -86,9 +83,13 @@ const appElem = document.querySelector('.app');
 
 if (client.getCurrentUser()) {
     appElem.innerHTML = getHomePageHTML();
-    const curTransElem = document.querySelector('#current-transactions');
-    curTransElem.appendChild(createTransactionList('current-transactions'));
-    emit('current-transactions', 'updated');
+
+    setTimeout(() => {
+        console.log('time');
+
+        const transactions = model.getCurrentTransactions();
+        useModel('current-transactions', transactions);
+    }, 1000);
 } else {
     appElem.innerHTML = getLoginPageHTML();
 }

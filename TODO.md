@@ -1,9 +1,12 @@
-# Implement page routing
+# Create a common header to navigate between pages
 
-With single-page application design in mind, all pages should have
-its own URL.
+The app component should display a header with links to different
+page content.
 
-Page implementations should be in separate modules.
+# Create an error popup for failed page requests
+
+When a page request does not work, show a dismissable popup message
+stating that something went wrong.
 
 # Create Budget page
 

@@ -17,11 +17,10 @@ export class Component extends HTMLElement {
     }
 
     connectedCallback() {
-        // Create a shadow root
         const shadow = this.attachShadow({ mode: 'open' });
 
         const style = document.createElement('style');
-        style.textContent = this._css;
+        style.textContent = `@import url("css/style.css");\n${this._css}`;
         shadow.appendChild(style);
 
         if (this.hasAttribute('model-id')) {

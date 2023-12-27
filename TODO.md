@@ -1,20 +1,16 @@
-# Header nav links should load different pages
-
-There is currently a header, but the nav links don't work yet.
-
 # Create an error popup for failed page requests
 
 When a page request does not work, show a dismissable popup message
 stating that something went wrong.
 
-# Create Budget page
+# Define Budget page
 
 Create a page to display the current status of one's monthly and/or
 yearly spending and savings goals.
 
 This page should be the home page after login.
 
-# Create Portfolio page
+# Define Portfolio page
 
 This page focuses on the assets the user owns and their value.
 

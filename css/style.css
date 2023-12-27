@@ -26,6 +26,12 @@ body {
     font-family: helvetica, arial, sans-serif;
 }
 
+.page {
+    display: grid;
+    gap: 0.5rem;
+    padding: 0.5rem;
+}
+
 .card {
     background: var(--light-background);
     border-radius: 0.4rem;

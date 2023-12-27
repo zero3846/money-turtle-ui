@@ -3,11 +3,6 @@ import * as client from '../client.js'
 import * as model from '../model.js'
 
 const css = `
-.page {
-    display: grid;
-    gap: 0.5rem;
-    padding: 0.5rem;
-}
 `;
 
 class CBudgetPage extends Component {
@@ -19,8 +14,6 @@ class CBudgetPage extends Component {
         const button = document.createElement('button');
         button.addEventListener('click', () => console.log('clicked'));
         button.innerText = "Click Me";
-
-        client.importData();
         
         const accounts = model.getAccounts();
         const assets = accounts.filter(a => a.typeClass === 'asset');

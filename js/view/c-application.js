@@ -1,6 +1,7 @@
 import { Component } from "./component.js"
 import { getModel, setModel, listen, emit } from './state.js'
 import { requestPage } from "../routes.js"
+import * as client from '../client.js'
 
 const css = `
 .app {
@@ -55,7 +56,7 @@ class CApplication extends Component {
 
     connectedCallback() {
         super.connectedCallback();
-        requestPage('home');
+        requestPage(window.location.hash);
     }
 
     buildContent() {
@@ -77,15 +78,12 @@ class CApplication extends Component {
 
     async loadPage(e) {
         const app = e.state;
-        console.log(`Requested Page: ${app.requestedPage}`);
-        console.log(`Actual Page: ${app.actualPage}`);
-
         const newPageElem = await import(`/js/view/c-${app.actualPage}-page.js`)
             .then(() => document.createElement(`c-${app.actualPage}-page`));
-
         const content = this.shadowRoot.querySelector('.content');
         content.replaceChildren(newPageElem);
     }
 }
 
+client.importData();
 customElements.define('c-application', CApplication);

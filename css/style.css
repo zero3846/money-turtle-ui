@@ -4,6 +4,14 @@
     --title-color: #aac9ca;
     --accent-dark: #35c3c1;
     --accent-light: #00d6b7;
+    --header-height: 2.5rem;
+
+    --background: #85B06E;
+    --light-background: #f5f5dc;
+    --positive-color: #0cce6b;
+    --negative-color: #af2422;
+    --text-color-dark: #22181c;
+    --text-color-light: #f7f7ee;
 }
 
 * {
@@ -13,18 +21,14 @@
 }
 
 body {
-    background: linear-gradient(
-        135deg,
-        var(--main-bg-color-left),
-        var(--main-bg-color-right)
-    );
+    background: var(--background);
+    color: var(--text-color-dark);
     font-family: helvetica, arial, sans-serif;
-    font-size: 1.5em;
 }
 
 .card {
-    background: rgba(255, 255, 255, 0.6);
-    margin: 0.5rem;
+    background: var(--light-background);
+    border-radius: 0.4rem;
     padding: 0.5rem;
 }
 

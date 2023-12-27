@@ -3,7 +3,11 @@ import * as client from '../client.js'
 import * as model from '../model.js'
 
 const css = `
-.page {}
+.page {
+    display: grid;
+    gap: 0.5rem;
+    padding: 0.5rem;
+}
 `;
 
 class CBudgetPage extends Component {

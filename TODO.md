@@ -1,7 +1,6 @@
-# Create a common header to navigate between pages
+# Header nav links should load different pages
 
-The app component should display a header with links to different
-page content.
+There is currently a header, but the nav links don't work yet.
 
 # Create an error popup for failed page requests
 
@@ -34,7 +33,7 @@ inventory might imply a highly structured system of accounts that
 describe physical locations, but in this application, this is not
 necessary.
 
-# Create Total Value page
+# Create Net Worth page
 
 This page allows the user to view his total value in terms of
 assets, liabilities, and equities.

@@ -4,12 +4,44 @@ import { requestPage } from "../routes.js"
 
 const css = `
 .app {
-    width: 100vw;
-    height: 100vh;
+    margin-top: var(--header-height);
 }
 
-.content {
+header {
+    background: var(--text-color-dark);
+    color: var(--light-background);
+    display: flex;
+    gap: 1rem;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: var(--header-height);
+}
 
+nav {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem;
+}
+
+.logo {
+    content: url("img/turtle-logo.svg");
+    height: var(--header-height);
+    padding: 0.1rem;
+}
+
+a {
+    font-weight: bold;
+    text-decoration: none;
+    color: var(--text-color-light);
+    padding: 0.2rem;
+}
+
+a:hover {
+    background: rgba(245, 245, 220, 0.5);
+    transition: 0.3s;
 }
 `;
 
@@ -30,9 +62,15 @@ class CApplication extends Component {
         const appElem = document.createElement('div');
         appElem.className = 'app';
         appElem.innerHTML = `
-            <div class="content">
-                <p>Hello World</p>
-            </div>
+            <header>
+                <a href="#" class="logo"></a>
+                <nav>
+                    <a href="#budget">Budget</a>
+                    <a href="#portfolio">Portfolio</a>
+                    <a href="#net-worth">Net Worth</a>
+                </nav>
+            </header>
+            <div class="content"></div>
         `;
         return appElem;
     }
